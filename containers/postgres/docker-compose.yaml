@@ -10,6 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
+      - ./data/OnlineRetail.csv:/input_data/OnlineRetail.csv
       - postgres-db-volume-beg_de_proj:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
