@@ -1,17 +1,19 @@
 version: '3'
 
 services:
-  postgres:
+  postgres-proj:
     image: postgres:13
     ports:
-      - 5432:5432
+      - 5434:5432
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: project
+      POSTGRES_PASSWORD: qweasdzxc
       POSTGRES_DB: postgres
     volumes:
-      - ./data/OnlineRetail.csv:/input_data/OnlineRetail.csv
+      - ./data:/data
       - postgres-db-volume-beg_de_proj:/var/lib/postgresql/data
+    networks:
+      - airflow-base_default
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
@@ -20,3 +22,7 @@ services:
 
 volumes:
   postgres-db-volume-beg_de_proj:
+
+networks:
+  airflow-base_default:
+      external: true

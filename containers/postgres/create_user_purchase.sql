@@ -1,4 +1,5 @@
-CREATE SCHEMA retail;
+DROP SCHEMA IF EXISTS retail CASCADE;
+Create SCHEMA retail;
 CREATE TABLE retail.user_purchase (
     invoice_number varchar(10),
     stock_code varchar(20),
@@ -19,4 +20,4 @@ COPY retail.user_purchase(
     customer_id,
     country
 )
-FROM '/input_data/OnlineRetail.csv' DELIMITER ',' CSV HEADER;
+FROM '/data/input_data/OnlineRetail.csv' DELIMITER ',' CSV HEADER;
