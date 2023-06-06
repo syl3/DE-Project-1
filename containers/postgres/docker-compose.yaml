@@ -12,6 +12,7 @@ services:
     volumes:
       - ./data:/data
       - postgres-db-volume-beg_de_proj:/var/lib/postgresql/data
+      - ${SHARED}:/shared
     networks:
       - airflow-base_default
     healthcheck:

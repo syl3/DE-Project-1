@@ -30,7 +30,7 @@ extract_user_purchase_data = PostgresOperator(
     task_id="extract_user_purchase_data",
     sql="./scripts/sql/unload_user_purchase.sql",
     postgres_conn_id="postgres_1",
-    params={"user_purchase": "/data/temp/user_purchase.csv"},
+    params={"user_purchase": "/shared/temp/user_purchase.csv"},
     depends_on_past=True,
     wait_for_downstream=True,
 )
