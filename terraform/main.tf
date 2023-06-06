@@ -53,21 +53,3 @@ resource "aws_s3_bucket_acl" "sde-data-lake-acl" {
   acl    = "public-read-write"
 }
 
-# IAM role for Redshift to be able to read data from S3 via Spectrum
-resource "aws_iam_role" "sde_redshift_iam_role" {
-  name = "sde_redshift_iam_role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "redshift.amazonaws.com"
-        }
-      },
-    ]
-  })
-
-  managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess", "arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess"]
-}
