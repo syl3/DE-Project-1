@@ -4,7 +4,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from datetime import datetime, timedelta
-from utils import _local_to_s3
+from utils.utils import _local_to_s3, run_redshift_external_query
 
 # Config
 BUCKET_NAME = Variable.get("BUCKET")
@@ -14,7 +14,7 @@ default_args = {
     "owner": "airflow",
     "depends_on_past": True,
     "wait_for_downstream": True,
-    "start_date": datetime(2021, 5, 23),
+    "start_date": datetime(2023, 6, 3),
     "email": ["airflow@airflow.com"],
     "email_on_failure": False,
     "email_on_retry": False,
@@ -28,7 +28,7 @@ dag = DAG(
     default_args=default_args,
     schedule_interval="0 0 * * *",
     max_active_runs=1,
-    catchup=False,
+    catchup=True,
 )
 
 extract_user_purchase_data = PostgresOperator(
@@ -55,6 +55,19 @@ user_purchase_to_stage_data_lake = PythonOperator(
 )
 
 
+user_purchase_stage_data_lake_to_stage_tbl = PythonOperator(
+    dag=dag,
+    task_id="user_purchase_stage_data_lake_to_stage_tbl",
+    python_callable=run_redshift_external_query,
+    op_kwargs={
+        "qry": "alter table spectrum.user_purchase_staging add \
+            if not exists partition(insert_date='{{ ds }}') \
+            location 's3://"
+        + BUCKET_NAME
+        + "/stage/user_purchase/{{ ds }}'",
+    },
+)
+
 end_of_data_pipeline = DummyOperator(task_id="end_of_data_pipeline", dag=dag)
 
-extract_user_purchase_data >> user_purchase_to_stage_data_lake >> end_of_data_pipeline
+extract_user_purchase_data >> user_purchase_to_stage_data_lake >> user_purchase_stage_data_lake_to_stage_tbl >> end_of_data_pipeline

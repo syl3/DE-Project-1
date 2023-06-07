@@ -8,5 +8,5 @@ COPY (
         customer_id,
         country
     from retail.user_purchase
-    where invoice_date between CURRENT_DATE and CURRENT_DATE + 1 -- we should have a date filter here to pull only required data
+    where invoice_date between '{{ execution_date.date() }}' and '{{ (execution_date + macros.timedelta(days=1)).date() }}' -- we should have a date filter here to pull only required data
 ) TO '{{ params.user_purchase }}' WITH (FORMAT CSV, HEADER);

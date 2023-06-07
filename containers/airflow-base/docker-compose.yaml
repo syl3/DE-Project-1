@@ -76,6 +76,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
+    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${SHARED}:/opt/airflow/shared
     #- ${DBT_PROFILE_PATH}:/home/airflow/.dbt
   user: "${AIRFLOW_UID:-50000}:1001"
