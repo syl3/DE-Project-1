@@ -68,6 +68,20 @@ user_purchase_stage_data_lake_to_stage_tbl = PythonOperator(
     },
 )
 
+
+movie_review_to_raw_data_lake = PythonOperator(
+    dag=dag,
+    task_id="movie_review_to_raw_data_lake",
+    python_callable=_local_to_s3,
+    op_kwargs={
+        "file_name": "/opt/airflow/data/movie_review.csv",
+        "key": "raw/movie_review/{{ ds }}/movie.csv",
+        "bucket_name": BUCKET_NAME,
+        "aws_conn_id": "aws_credentials",
+    },
+)
+
 end_of_data_pipeline = DummyOperator(task_id="end_of_data_pipeline", dag=dag)
 
-extract_user_purchase_data >> user_purchase_to_stage_data_lake >> user_purchase_stage_data_lake_to_stage_tbl >> end_of_data_pipeline
+(extract_user_purchase_data >> user_purchase_to_stage_data_lake >> user_purchase_stage_data_lake_to_stage_tbl) >> end_of_data_pipeline
+movie_review_to_raw_data_lake
