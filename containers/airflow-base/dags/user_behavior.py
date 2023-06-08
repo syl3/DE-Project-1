@@ -15,7 +15,7 @@ default_args = {
     "owner": "airflow",
     "depends_on_past": True,
     "wait_for_downstream": True,
-    "start_date": datetime(2023, 6, 5),
+    "start_date": datetime(2023, 6, 1),
     "email": ["airflow@airflow.com"],
     "email_on_failure": False,
     "email_on_retry": False,
@@ -89,11 +89,22 @@ start_movie_classification_script = BashOperator(
     params={"BUCKET_NAME": BUCKET_NAME},
 )
 
+generate_user_behavior_metric = PostgresOperator(
+    dag=dag,
+    task_id="generate_user_behavior_metric",
+    sql="scripts/sql/generate_user_behavior_metric.sql",
+    postgres_conn_id="redshift",
+)
+
 end_of_data_pipeline = DummyOperator(task_id="end_of_data_pipeline", dag=dag)
 
 (
     extract_user_purchase_data
     >> user_purchase_to_stage_data_lake
     >> user_purchase_stage_data_lake_to_stage_tbl
-) >> end_of_data_pipeline
-movie_review_to_raw_data_lake >> start_movie_classification_script
+) 
+(movie_review_to_raw_data_lake >> start_movie_classification_script)
+[
+        user_purchase_stage_data_lake_to_stage_tbl,
+        start_movie_classification_script,
+] >> generate_user_behavior_metric >> end_of_data_pipeline #

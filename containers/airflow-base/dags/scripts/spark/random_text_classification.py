@@ -4,6 +4,7 @@ import argparse
 from pyspark.ml.feature import StopWordsRemover, Tokenizer
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import array_contains, lit
+from pyspark.sql import types
 from pyspark import SparkConf
 
 from airflow.models import Connection
@@ -40,6 +41,7 @@ def random_text_classifier(input_loc: str, output_loc: str, run_id: str) -> None
         array_contains(df_clean.review_clean, "good").alias("positive_review"),
     )
     df_fin = df_out.withColumn("insert_date", lit(run_id))
+    df_fin = df_fin.withColumn("cid", df_fin["cid"].cast(types.StringType()))
     # parquet is a popular column storage format, we use it here
     df_fin.write.mode("overwrite").parquet(output_loc)
 
