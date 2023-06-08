@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.models import Variable
 from datetime import datetime, timedelta
 from utils.utils import _local_to_s3, run_redshift_external_query
@@ -14,7 +15,7 @@ default_args = {
     "owner": "airflow",
     "depends_on_past": True,
     "wait_for_downstream": True,
-    "start_date": datetime(2023, 6, 3),
+    "start_date": datetime(2023, 6, 5),
     "email": ["airflow@airflow.com"],
     "email_on_failure": False,
     "email_on_retry": False,
@@ -81,7 +82,18 @@ movie_review_to_raw_data_lake = PythonOperator(
     },
 )
 
+start_movie_classification_script = BashOperator(
+    dag=dag,
+    task_id="start_movie_classification_script",
+    bash_command="python $AIRFLOW_HOME/dags/scripts/spark/random_text_classification.py --bucket-name={{ params.BUCKET_NAME }} --input=/raw/movie_review/{{ ds }}/movie.csv --output=/stage/movie_review --run-id={{ ds }}",
+    params={"BUCKET_NAME": BUCKET_NAME},
+)
+
 end_of_data_pipeline = DummyOperator(task_id="end_of_data_pipeline", dag=dag)
 
-(extract_user_purchase_data >> user_purchase_to_stage_data_lake >> user_purchase_stage_data_lake_to_stage_tbl) >> end_of_data_pipeline
-movie_review_to_raw_data_lake
+(
+    extract_user_purchase_data
+    >> user_purchase_to_stage_data_lake
+    >> user_purchase_stage_data_lake_to_stage_tbl
+) >> end_of_data_pipeline
+movie_review_to_raw_data_lake >> start_movie_classification_script
