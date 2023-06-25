@@ -1,4 +1,8 @@
-# 1. Objective
+# 1. Intro
+
+This project originated from [josephmachado](https://github.com/josephmachado/beginner_de_project). Due to the simplicity of the task and the long startup time and high cost of EMR (Elastic MapReduce), I replaced the EMR component with a local one node Docker version. This allows for faster development and avoids significant cost pressure during the initial practice and Spark development. Once familiar with the setup, it can be switched back to the original architecture.
+
+# 2. Objective
 
 Let’s assume that you work for a user behavior analytics company that collects user data and creates a user profile. We are tasked with building a data pipeline to populate the user_behavior_metric table. The user_behavior_metric table is an OLAP table, meant to be used by analysts, dashboard software, etc. It is built from
 
@@ -8,7 +12,7 @@ Let’s assume that you work for a user behavior analytics company that collects
 
 ![Alt text](img/ERD.png?raw=true "ERD")
 
-# 2. Design
+# 3. Design
 We will be using Airflow to orchestrate the following tasks:
 
 1. Classifying movie reviews with Apache Spark.
@@ -18,14 +22,24 @@ We will be using Airflow to orchestrate the following tasks:
 ![Alt text](img/design.jpg?raw=true "Optional Title")
 We will use metabase to visualize our data.
 
-# 3. Setup
+# 4. Setup
 
-1. Download data
+## Prerequiements  
+1. [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)  
+2. [Github account](https://github.com)  
+3. [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)  
+4. [AWS account](https://aws.amazon.com)  
+5. [Docker](https://docs.docker.com/engine/install/) with at least 4GB of RAM and [Docker Compose](https://docs.docker.com/compose/install/) v1.27.0 or later  
+6. [psql](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)  
+
+## Steps
+
+1. Download data.
 ```bash
 wget https://start-data-engg.s3.amazonaws.com/data.zip && unzip -o data.zip && chmod -R u=rwx,g=rwx,o=rwx data
 ```
 
-2. 
+2. Transform data time.
 ```bash
 python containers/postgres/transform_time.py
 ```
@@ -40,18 +54,22 @@ chmod -R 777 containers/shared/
 terraform apply -auto-approve
 ```
 
-5. Set up redshift. Follow redshift/README.md
+5. Set up redshift. Follow [./redshift/README.md](./redshift/README.md)
 
-6. Set up airflow. Follow containers/airflow/README.md
+6. Set up airflow. Follow [./containers/airflow/README.md](./containers/airflow/README.md)
 
-7. Set up postgres. Follow containers/postgres/README.md
+7. Set up postgres. Follow [./containers/postgres/README.md](./containers/postgres/README.md)
 
-# 4. Result
+# 5. Result
 
 ![Alt text](img/airflow-grid.png?raw=true "Airflow Grid")
 ![Alt text](img/airflow-graph.png?raw=true "Airflow Graph")
 ![Alt text](img/metabase.png?raw=true "Metabase")
 
+# 6. Next Steps
+1. CI CD pipeline.
+2. Integrations or unit tests.
+3. DBT.
 
 **Credit:** 
 
