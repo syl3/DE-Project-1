@@ -14,4 +14,8 @@ docker compose up -d
 ```
 
 4. Set up connections and variables.
+ - aws_credentials
+ - bucket_name
+ - redshift_connection_info
+ - postgres_connection_info
 
