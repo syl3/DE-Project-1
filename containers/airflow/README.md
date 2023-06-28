@@ -3,7 +3,7 @@
 AIRFLOW_IMAGE_NAME=<image name>
 AIRFLOW_UID=50000
 ```
-2. 
+2. Build image.
 ```bash
 docker build -t <image name> .
 ```

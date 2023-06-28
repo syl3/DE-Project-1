@@ -1,6 +1,6 @@
 # 1. Intro
 
-This project originated from [josephmachado](https://github.com/josephmachado/beginner_de_project). Due to the simplicity of the task and the long startup time and high cost of EMR (Elastic MapReduce), I replaced the EMR component with a local one node Docker version. This allows for faster development and avoids significant cost pressure during the initial practice and Spark development. Once familiar with the setup, it can be switched back to the original architecture.
+This project originated from [josephmachado](https://github.com/josephmachado/beginner_de_project). Due to the simplicity of the task and the long startup time and high cost of EMR (Elastic MapReduce), I replaced the EMR component with a local Spark Docker container. This allows for faster development and avoids cost pressure during the initial practice and Spark development. Once familiar with the setup, it can be switched back to the original architecture.
 
 # 2. Objective
 
@@ -54,11 +54,11 @@ chmod -R 777 containers/shared/
 terraform apply -auto-approve
 ```
 
-5. Set up redshift. Follow [./redshift/README.md](./redshift/README.md)
+5. Set up redshift. Follow [README.md](./redshift/README.md)
 
-6. Set up airflow. Follow [./containers/airflow/README.md](./containers/airflow/README.md)
+6. Set up airflow. Follow [README.md](./containers/airflow/README.md)
 
-7. Set up postgres. Follow [./containers/postgres/README.md](./containers/postgres/README.md)
+7. Set up postgres. Follow [README.md](./containers/postgres/README.md)
 
 # 5. Result
 
